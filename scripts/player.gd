@@ -1,11 +1,22 @@
 extends CharacterBody2D
 
 var speed := 200.0
-var max_health := 1
-var health := 1
+var max_health := 100
+var health := 100
 
 const ARENA_MIN := Vector2(40, 40)
 const ARENA_MAX := Vector2(1240, 680)
+
+@onready var weapon_left := $WeaponLeft
+@onready var weapon_right := $WeaponRight
+
+func _ready() -> void:
+	weapon_left.init(10, 1.0)
+	weapon_right.init(10, 1.5)
+
+func set_nearest_enemy(enemy: Node2D) -> void:
+	weapon_left.set_target(enemy)
+	weapon_right.set_target(enemy)
 
 func take_damage(amount: int) -> void:
 	health -= amount

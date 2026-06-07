@@ -4,11 +4,14 @@ extends Node2D
 @onready var enemy_spawner := $EnemySpawner
 @onready var wave_manager := $WaveManager
 @onready var hud := $HUD
+@onready var shop := $Shop
 
 func _ready() -> void:
 	enemy_spawner.init(player)
 	wave_manager.init(enemy_spawner)
+	shop.init(player)
 	wave_manager.wave_ended.connect(_on_wave_ended)
+	shop.closed.connect(_on_shop_closed)
 	wave_manager.start_next_wave()
 
 func _process(delta: float) -> void:
@@ -32,6 +35,9 @@ func _update_nearest_enemy() -> void:
 func _on_wave_ended(wave_number: int) -> void:
 	_clear_enemies()
 	_regen_player()
+	shop.open()
+
+func _on_shop_closed() -> void:
 	wave_manager.start_next_wave()
 
 func _clear_enemies() -> void:

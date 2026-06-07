@@ -2,6 +2,9 @@ extends CharacterBody2D
 
 @export var speed := 200.0
 
+const ARENA_MIN := Vector2(40, 40)
+const ARENA_MAX := Vector2(1240, 680)
+
 func _physics_process(delta: float) -> void:
 	var direction := Vector2.ZERO
 
@@ -13,3 +16,5 @@ func _physics_process(delta: float) -> void:
 
 	velocity = direction * speed
 	move_and_slide()
+
+	position = position.clamp(ARENA_MIN, ARENA_MAX)

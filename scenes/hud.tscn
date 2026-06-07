@@ -24,3 +24,7 @@ show_percentage = false
 [node name="PepperCount" type="Label" parent="Container" unique_id=775885209]
 layout_mode = 2
 text = "🌶 0"
+
+[node name="WaveLabel" type="Label" parent="Container" unique_id=850757229]
+layout_mode = 2
+text = "Vague 1"

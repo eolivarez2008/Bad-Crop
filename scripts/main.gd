@@ -12,11 +12,12 @@ func _ready() -> void:
 	wave_manager.init(enemy_spawner)
 	shop.init(player)
 	wave_manager.wave_ended.connect(_on_wave_ended)
+	wave_manager.wave_started.connect(_on_wave_started)
 	shop.closed.connect(_on_shop_closed)
 	wave_manager.start_next_wave()
-	_watch_player_death()
+	_start_death_watch()
 
-func _watch_player_death() -> void:
+func _start_death_watch() -> void:
 	var timer := Timer.new()
 	timer.wait_time = 0.1
 	timer.autostart = true
@@ -44,6 +45,9 @@ func _update_nearest_enemy() -> void:
 			nearest = enemy
 
 	player.set_nearest_enemy(nearest)
+
+func _on_wave_started(wave_number: int) -> void:
+	hud.update_wave(wave_number)
 
 func _on_wave_ended(wave_number: int) -> void:
 	_clear_enemies()

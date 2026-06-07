@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cgnydmgq4olg6" path="res://scripts/wave_manager.gd" id="4_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://b5dlcf2c4ufbe" path="res://scenes/hud.tscn" id="5_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://byahge3pgxjid" path="res://scenes/shop.tscn" id="6_tefeu"]
+[ext_resource type="PackedScene" uid="uid://ctb2d8fxwcp34" path="res://scenes/game_over.tscn" id="7_o6xl0"]
 
 [node name="Main" type="Node2D" unique_id=1006841536]
 script = ExtResource("1_sugp2")
@@ -33,6 +34,9 @@ script = ExtResource("4_jyhfs")
 process_mode = 3
 
 [node name="Shop" parent="." unique_id=1747490452 instance=ExtResource("6_tefeu")]
+process_mode = 3
+
+[node name="GameOver" parent="." unique_id=1318348129 instance=ExtResource("7_o6xl0")]
 process_mode = 3
 
 [connection signal="timeout" from="EnemySpawner/SpawnTimer" to="EnemySpawner" method="_on_spawn_timer_timeout"]

@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Hell's kichen"
-run/main_scene="uid://dnmaehudnh84d"
+run/main_scene="uid://da1uepob8p5uo"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SaveManager="*uid://dwecbflynt2vq"
 
 [display]
 

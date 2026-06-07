@@ -5,6 +5,7 @@ extends Node2D
 @onready var wave_manager := $WaveManager
 @onready var hud := $HUD
 @onready var shop := $Shop
+@onready var game_over := $GameOver
 
 func _ready() -> void:
 	enemy_spawner.init(player)
@@ -13,6 +14,18 @@ func _ready() -> void:
 	wave_manager.wave_ended.connect(_on_wave_ended)
 	shop.closed.connect(_on_shop_closed)
 	wave_manager.start_next_wave()
+	_watch_player_death()
+
+func _watch_player_death() -> void:
+	var timer := Timer.new()
+	timer.wait_time = 0.1
+	timer.autostart = true
+	timer.timeout.connect(_check_player_dead)
+	add_child(timer)
+
+func _check_player_dead() -> void:
+	if player.health <= 0:
+		game_over.show_game_over(wave_manager.current_wave)
 
 func _process(delta: float) -> void:
 	_update_nearest_enemy()

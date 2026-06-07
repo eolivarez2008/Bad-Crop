@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://ctb2d8fxwcp34"]
+
+[ext_resource type="Script" uid="uid://okejl00b55k8" path="res://scripts/game_over.gd" id="1_xeevv"]
+
+[node name="GameOver" type="CanvasLayer" unique_id=1318348129]
+process_mode = 3
+layer = 3
+visible = false
+script = ExtResource("1_xeevv")
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=1352740843]
+custom_minimum_size = Vector2(400, 280)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -44.5
+offset_right = 20.0
+offset_bottom = 44.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Panel" unique_id=861473189]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/Layout" unique_id=1518390506]
+layout_mode = 2
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="WaveLabel" type="Label" parent="Panel/Layout" unique_id=1910455303]
+layout_mode = 2
+text = "Vague atteinte : 0"
+horizontal_alignment = 1
+
+[node name="BestScore" type="Label" parent="Panel/Layout" unique_id=484576634]
+layout_mode = 2
+text = "Meilleur score : 0"
+horizontal_alignment = 1
+
+[node name="MenuButton" type="Button" parent="Panel/Layout" unique_id=1976493205]
+layout_mode = 2
+text = "Menu Principal"

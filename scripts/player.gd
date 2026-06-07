@@ -10,7 +10,7 @@ const ARENA_MAX := Vector2(1240, 680)
 
 @onready var weapon_left := $WeaponLeft
 @onready var weapon_right := $WeaponRight
-@onready var hud: CanvasLayer = $"hud"
+@onready var hud: CanvasLayer = $"../hud"
 
 func _ready() -> void:
 	add_to_group("player")
@@ -29,15 +29,8 @@ func set_nearest_enemy(enemy: Node2D) -> void:
 func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
-	
 	if hud:
 		hud.update_health(health, max_health)
-		
-	if health <= 0:
-		die()
-
-func die() -> void:
-	get_tree().quit()
 
 func _physics_process(delta: float) -> void:
 	var direction := Vector2.ZERO

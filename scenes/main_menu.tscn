@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://da1uepob8p5uo"]
+
+[ext_resource type="Script" uid="uid://bfjxc1gbxfaun" path="res://scripts/main_menu.gd" id="1_l6cm7"]
+
+[node name="MainMenu" type="CanvasLayer" unique_id=1941040322]
+script = ExtResource("1_l6cm7")
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=571526451]
+custom_minimum_size = Vector2(400, 250)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -31.0
+offset_right = 20.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Panel" unique_id=616442932]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/Layout" unique_id=1866087702]
+layout_mode = 2
+text = "👨‍🍳 Chef Survivor"
+horizontal_alignment = 1
+
+[node name="BestScore" type="Label" parent="Panel/Layout" unique_id=874556792]
+layout_mode = 2
+text = "Meilleur score : 0"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="Panel/Layout" unique_id=558512331]
+layout_mode = 2
+text = "Jouer"

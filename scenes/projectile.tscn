@@ -3,8 +3,11 @@
 [ext_resource type="Script" uid="uid://snq8wfiu7uty" path="res://scripts/projectile.gd" id="1_c8fcr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6aapk"]
+size = Vector2(8, 8)
 
 [node name="Projectile" type="Area2D" unique_id=1338593265]
+collision_layer = 3
+collision_mask = 2
 script = ExtResource("1_c8fcr")
 
 [node name="Body" type="ColorRect" parent="." unique_id=359396543]
@@ -15,7 +18,4 @@ offset_bottom = 5.0
 color = Color(0.94509804, 0.76862746, 0.05882353, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=264677913]
-scale = Vector2(0.5, 0.5)
 shape = SubResource("RectangleShape2D_6aapk")
-
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]

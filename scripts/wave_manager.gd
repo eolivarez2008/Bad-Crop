@@ -17,11 +17,11 @@ func start_next_wave() -> void:
 	current_wave += 1
 	wave_duration = 30.0 + (current_wave - 1) * 8.0
 
-	var new_interval := maxf(0.3, 2.0 - (current_wave - 1) * 0.12)
-	var enemy_health := 20 + (current_wave - 1) * 12
-	var enemy_speed := 80.0 + (current_wave - 1) * 6.0
+	var interval := maxf(0.4, 2.0 - (current_wave - 1) * 0.12)
+	var h_mult := 1.0 + (current_wave - 1) * 0.3
+	var s_mult := 1.0 + (current_wave - 1) * 0.08
 
-	_spawner.set_wave_params(new_interval, enemy_health, enemy_speed)
+	_spawner.set_wave_params(interval, h_mult, s_mult)
 	_spawner.start()
 
 	time_remaining = wave_duration

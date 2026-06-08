@@ -16,6 +16,8 @@ offset_right = 1280.0
 offset_bottom = 720.0
 color = Color(0.101960786, 0.101960786, 0.18039216, 1)
 
+[node name="SpawnZone" type="Node2D" parent="." unique_id=1410065399]
+
 [node name="Player" parent="." unique_id=553080397 instance=ExtResource("1_o5qli")]
 process_mode = 1
 position = Vector2(640, 360)
@@ -37,6 +39,5 @@ process_mode = 3
 process_mode = 3
 
 [node name="GameOver" parent="." unique_id=1318348129 instance=ExtResource("7_o6xl0")]
-process_mode = 3
 
 [connection signal="timeout" from="EnemySpawner/SpawnTimer" to="EnemySpawner" method="_on_spawn_timer_timeout"]

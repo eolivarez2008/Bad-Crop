@@ -17,9 +17,13 @@ func set_target(t: Node2D) -> void:
 
 func _process(delta: float) -> void:
 	_timer += delta
+
 	if target == null or not is_instance_valid(target):
 		target = null
 		return
+
+	var dir := target.global_position - global_position
+	rotation = atan2(dir.y, dir.x) + PI / 2
 
 	if _timer >= fire_rate:
 		_timer = 0.0

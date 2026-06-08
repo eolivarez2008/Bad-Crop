@@ -24,26 +24,5 @@ shape = SubResource("RectangleShape2D_u8vuu")
 [node name="WeaponLeft" parent="." unique_id=952453100 instance=ExtResource("2_g2els")]
 position = Vector2(-20, 0)
 
-[node name="ColorRect" type="ColorRect" parent="WeaponLeft" unique_id=1000136135]
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -3.0
-offset_bottom = 2.0
-grow_horizontal = 0
-grow_vertical = 2
-
 [node name="WeaponRight" parent="." unique_id=2121068565 instance=ExtResource("2_g2els")]
 position = Vector2(20, 0)
-
-[node name="ColorRect" type="ColorRect" parent="WeaponRight" unique_id=745586656]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -3.0
-offset_right = 5.0
-offset_bottom = 2.0
-grow_vertical = 2

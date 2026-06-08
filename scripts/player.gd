@@ -13,10 +13,14 @@ const ARENA_MAX := Vector2(1240, 680)
 @onready var hud: CanvasLayer = $"../hud"
 @onready var body := $Body
 
-var _flash_timer := 0.0
-const FLASH_DURATION := 0.15
 const COLOR_NORMAL := Color(0.29, 0.56, 0.85)
-const COLOR_HIT := Color(1.0, 0.2, 0.2)
+const COLOR_HIT := Color(1.0, 1.0, 1.0)
+const FLASH_DURATION: float = 0.1
+
+var _flash_timer: float = 0.0
+var _time: float = 0.0
+var _target_scale: Vector2 = Vector2.ONE
+var _current_scale: Vector2 = Vector2.ONE
 
 func _ready() -> void:
 	add_to_group("player")
@@ -24,6 +28,9 @@ func _ready() -> void:
 	weapon_right.init(10, 1.5)
 	if hud:
 		hud.update_health(health, max_health)
+	
+	if body:
+		body.pivot_offset = body.size / 2.0
 
 func add_peppers(amount: int) -> void:
 	peppers += amount
@@ -36,18 +43,32 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
 	_flash_timer = FLASH_DURATION
+	_current_scale = Vector2(1.4, 0.6)
 	if hud:
 		hud.update_health(health, max_health)
 
 func _process(delta: float) -> void:
+	_time += delta
+	
+	_flash_timer -= delta
 	if _flash_timer > 0.0:
-		_flash_timer -= delta
 		body.color = COLOR_HIT
 	else:
 		body.color = COLOR_NORMAL
+	
+	if velocity.length() > 0.1:
+		var speed_factor: float = velocity.length() / speed
+		var wave: float = sin(_time * 18.0) * 0.08 * speed_factor
+		_target_scale = Vector2(1.0 + wave + (speed_factor * 0.05), 1.0 - wave - (speed_factor * 0.05))
+	else:
+		var wave: float = sin(_time * 18.0) * 0.08
+		_target_scale = Vector2(1.0 + wave, 1.0 - wave)
+	
+	_current_scale = _current_scale.lerp(_target_scale, 12.0 * delta)
+	body.scale = _current_scale
 
 func _physics_process(delta: float) -> void:
-	var direction := Vector2.ZERO
+	var direction: Vector2 = Vector2.ZERO
 	direction.x = Input.get_axis("ui_left", "ui_right")
 	direction.y = Input.get_axis("ui_up", "ui_down")
 

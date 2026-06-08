@@ -12,10 +12,16 @@ var pepper_table: Array = []
 
 var target: Node2D = null
 var _dead := false
-var _flash_timer := 0.0
+var _move_dir: Vector2 = Vector2.ZERO
+var _anim_scale: Vector2 = Vector2.ONE
+var _time: float = 0.0
 
-const FLASH_DURATION := 0.1
+const FLASH_DURATION: float = 0.1
+const SQUASH_DURATION: float = 0.12
 const COLOR_HIT := Color(1.0, 1.0, 1.0)
+
+var _flash_timer: float = 0.0
+var _squash_timer: float = 0.0
 
 @onready var visual := $Body
 @onready var col_shape := $CollisionShape2D
@@ -31,7 +37,7 @@ func _apply_visuals() -> void:
 	visual.offset_top = -body_size.y / 2
 	visual.offset_right = body_size.x / 2
 	visual.offset_bottom = body_size.y / 2
-	var rect := RectangleShape2D.new()
+	var rect: RectangleShape2D = RectangleShape2D.new()
 	rect.size = body_size
 	col_shape.shape = rect
 
@@ -47,6 +53,7 @@ func take_damage(amount: int) -> void:
 		return
 	health -= amount
 	_flash_timer = FLASH_DURATION
+	_squash_timer = SQUASH_DURATION
 	if health <= 0:
 		die(true)
 
@@ -59,9 +66,9 @@ func die(should_drop: bool) -> void:
 	queue_free()
 
 func _drop_pepper() -> void:
-	var roll := randf()
-	var cumulative := 0.0
-	var chosen_type := 0
+	var roll: float = randf()
+	var cumulative: float = 0.0
+	var chosen_type: int = 0
 	for entry in pepper_table:
 		cumulative += entry["chance"]
 		if roll <= cumulative:
@@ -73,17 +80,39 @@ func _drop_pepper() -> void:
 	pepper.init(chosen_type)
 
 func _process(delta: float) -> void:
+	_time += delta
+	_update_procedural_animations(delta)
+
+func _update_procedural_animations(delta: float) -> void:
+	_flash_timer -= delta
+	_squash_timer -= delta
+
 	if _flash_timer > 0.0:
-		_flash_timer -= delta
 		visual.color = COLOR_HIT
 	else:
 		visual.color = body_color
 
+	if _squash_timer > 0.0:
+		var t: float = _squash_timer / SQUASH_DURATION
+		_anim_scale = Vector2(1.0 + 0.4 * t, 1.0 - 0.4 * t)
+		visual.scale = _anim_scale
+		return
+
+	if _move_dir != Vector2.ZERO:
+		var bounce: float = sin(_time * 14.0) * 0.05
+		var sx: float = 1.0 + abs(_move_dir.x) * 0.15 - abs(_move_dir.y) * 0.08 + bounce
+		var sy: float = 1.0 + abs(_move_dir.y) * 0.15 - abs(_move_dir.x) * 0.08 - bounce
+		_anim_scale = _anim_scale.lerp(Vector2(sx, sy), 0.2)
+	else:
+		_anim_scale = _anim_scale.lerp(Vector2.ONE, 0.15)
+
+	visual.scale = _anim_scale
+
 func _physics_process(delta: float) -> void:
 	if target == null or _dead:
 		return
-	var dir := (target.global_position - global_position).normalized()
-	global_position += dir * speed * delta
+	_move_dir = (target.global_position - global_position).normalized()
+	global_position += _move_dir * speed * delta
 
 func _on_body_entered(body_node: Node) -> void:
 	if body_node.is_in_group("player"):

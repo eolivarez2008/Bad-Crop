@@ -1,20 +1,21 @@
-[gd_scene format=3 uid="uid://enemy_slimek"]
+[gd_scene format=3 uid="uid://b2l2ei2h80u7q"]
 
-[ext_resource type="Script" path="res://scripts/enemy_slimek.gd" id="1_slimek"]
+[ext_resource type="Script" uid="uid://cehuaewcgis8o" path="res://scripts/enemy_slimek.gd" id="1_slimek"]
+[ext_resource type="Texture2D" uid="uid://br7mpwkfiw5x3" path="res://assets/sprites/sprite.png" id="2_qfioo"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_s"]
-size = Vector2(36, 36)
+[sub_resource type="CircleShape2D" id="CircleShape2D_qfioo"]
+radius = 19.0
 
-[node name="EnemySlimek" type="Area2D" groups=["enemies"]]
+[node name="EnemySlimek" type="Area2D" unique_id=958341226 groups=["enemies"]]
 collision_layer = 2
-collision_mask = 1
 script = ExtResource("1_slimek")
 
-[node name="Body" type="ColorRect" parent="."]
-offset_left = -18.0
-offset_top = -18.0
-offset_right = 18.0
-offset_bottom = 18.0
+[node name="Body" type="Sprite2D" parent="." unique_id=604162871]
+scale = Vector2(0.585, 0.585)
+texture = ExtResource("2_qfioo")
+region_enabled = true
+region_rect = Rect2(194.08832, 85.91928, 95.832184, 74.55591)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_s")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1617930675]
+position = Vector2(2, 2)
+shape = SubResource("CircleShape2D_qfioo")

@@ -2,35 +2,31 @@
 
 [ext_resource type="Script" uid="uid://vbu0m4gwbmrh" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="PackedScene" uid="uid://d0shboh8v5i8d" path="res://scenes/weapon.tscn" id="2_g2els"]
+[ext_resource type="Texture2D" uid="uid://br7mpwkfiw5x3" path="res://assets/sprites/sprite.png" id="2_qhqgy"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_u8vuu"]
-size = Vector2(38, 38)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qhqgy"]
+radius = 19.0
+height = 48.0
 
 [node name="Player" type="CharacterBody2D" unique_id=553080397]
 script = ExtResource("1_3vyb7")
 
-[node name="Body" type="ColorRect" parent="." unique_id=1023561737]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(20, 20)
-color = Color(0.2901961, 0.5647059, 0.8509804, 1)
+[node name="Body" type="Sprite2D" parent="." unique_id=1252013559]
+texture_filter = 1
+position = Vector2(-6, 0)
+scale = Vector2(0.5, 0.411)
+texture = ExtResource("2_qhqgy")
+region_enabled = true
+region_rect = Rect2(20.72725, 26.272547, 125.81816, 135.3866)
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=1628304059]
-shape = SubResource("RectangleShape2D_u8vuu")
+position = Vector2(-4, 1)
+shape = SubResource("CapsuleShape2D_qhqgy")
 
 [node name="Camera" type="Camera2D" parent="." unique_id=681890891]
 
 [node name="WeaponLeft" parent="." unique_id=952453100 instance=ExtResource("2_g2els")]
-position = Vector2(-20, 0)
+position = Vector2(-24, 0)
 
 [node name="WeaponRight" parent="." unique_id=2121068565 instance=ExtResource("2_g2els")]
-position = Vector2(20, 0)
+position = Vector2(24, 0)

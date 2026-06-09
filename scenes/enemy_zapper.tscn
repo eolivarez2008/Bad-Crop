@@ -1,20 +1,20 @@
-[gd_scene format=3 uid="uid://enemy_zapper"]
+[gd_scene format=3 uid="uid://drnc6i1qsdpon"]
 
-[ext_resource type="Script" path="res://scripts/enemy_zapper.gd" id="1_zapper"]
+[ext_resource type="Script" uid="uid://drsf5t3461sxg" path="res://scripts/enemy_zapper.gd" id="1_zapper"]
+[ext_resource type="Texture2D" uid="uid://br7mpwkfiw5x3" path="res://assets/sprites/sprite.png" id="2_6j8be"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_z"]
-size = Vector2(24, 24)
+[sub_resource type="CircleShape2D" id="CircleShape2D_lannb"]
+radius = 16.03122
 
-[node name="EnemyZapper" type="Area2D" groups=["enemies"]]
+[node name="EnemyZapper" type="Area2D" unique_id=353515400 groups=["enemies"]]
 collision_layer = 2
-collision_mask = 1
 script = ExtResource("1_zapper")
 
-[node name="Body" type="ColorRect" parent="."]
-offset_left = -12.0
-offset_top = -12.0
-offset_right = 12.0
-offset_bottom = 12.0
+[node name="Body" type="Sprite2D" parent="." unique_id=187117043]
+scale = Vector2(0.415, 0.415)
+texture = ExtResource("2_6j8be")
+region_enabled = true
+region_rect = Rect2(526.00494, 41.40509, 122.03839, 114.197876)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_z")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=833761039]
+shape = SubResource("CircleShape2D_lannb")

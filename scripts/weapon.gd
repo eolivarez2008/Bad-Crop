@@ -2,15 +2,20 @@ extends Node2D
 
 const ProjectileScene := preload("res://scenes/projectile.tscn")
 
+@export var flip_base: bool = false
+
 var damage := 10
 var fire_rate := 1.0
 var target: Node2D = null
 
 var _timer := 0.0
 
+@onready var body: Sprite2D = $Body
+
 func init(dmg: int, rate: float) -> void:
 	damage = dmg
 	fire_rate = rate
+	body.flip_v = flip_base
 
 func set_target(t: Node2D) -> void:
 	target = t
@@ -22,8 +27,9 @@ func _process(delta: float) -> void:
 		target = null
 		return
 
-	var dir := target.global_position - global_position
-	rotation = atan2(dir.y, dir.x) + PI / 2
+	var dir: Vector2 = target.global_position - global_position
+	rotation = atan2(dir.y, dir.x)
+	body.flip_v = dir.x < 0.0
 
 	if _timer >= fire_rate:
 		_timer = 0.0
@@ -31,7 +37,9 @@ func _process(delta: float) -> void:
 
 func _shoot() -> void:
 	var projectile := ProjectileScene.instantiate()
-	var dir := (target.global_position - global_position).normalized()
+	var dir: Vector2 = (target.global_position - global_position).normalized()
 	projectile.global_position = global_position
-	projectile.init(dir, damage)
+	
 	get_tree().current_scene.add_child(projectile)
+	
+	projectile.init(dir, damage)

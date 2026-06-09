@@ -1,12 +1,25 @@
 [gd_scene format=3 uid="uid://bguc14wtulgvh"]
 
 [ext_resource type="Script" uid="uid://djd2fsnj3pw55" path="res://scripts/pepper.gd" id="1_qpex2"]
+[ext_resource type="Texture2D" uid="uid://br7mpwkfiw5x3" path="res://assets/sprites/sprite.png" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qpex2"]
-radius = 2.236068
+radius = 12.0
 
 [node name="Pepper" type="Area2D" unique_id=1196605049]
 script = ExtResource("1_qpex2")
+REGIONS = {
+0: Rect2(402, 287, 51, 52),
+1: Rect2(500, 287, 51, 52),
+2: Rect2(591, 287, 51, 52)
+}
+
+[node name="Body" type="Sprite2D" parent="." unique_id=222333444]
+texture_filter = 1
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_sprite")
+region_enabled = true
+region_rect = Rect2(402, 287, 51, 52)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1108527761]
 shape = SubResource("CircleShape2D_qpex2")

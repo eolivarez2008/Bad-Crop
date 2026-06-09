@@ -6,8 +6,6 @@ var speed := 90.0
 var max_health := 30
 var health := 30
 var contact_damage := 10
-var body_size := Vector2(36, 36)
-var body_color := Color(0.91, 0.30, 0.24)
 var pepper_table: Array = []
 
 var target: Node2D = null
@@ -18,7 +16,7 @@ var _time: float = 0.0
 
 const FLASH_DURATION: float = 0.1
 const SQUASH_DURATION: float = 0.12
-const COLOR_HIT := Color(1.0, 1.0, 1.0)
+const COLOR_HIT := Color(10.0, 10.0, 10.0)
 
 var _flash_timer: float = 0.0
 var _squash_timer: float = 0.0
@@ -32,14 +30,8 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 func _apply_visuals() -> void:
-	visual.color = body_color
-	visual.offset_left = -body_size.x / 2
-	visual.offset_top = -body_size.y / 2
-	visual.offset_right = body_size.x / 2
-	visual.offset_bottom = body_size.y / 2
-	var rect: RectangleShape2D = RectangleShape2D.new()
-	rect.size = body_size
-	col_shape.shape = rect
+	if visual:
+		_anim_scale = visual.scale
 
 func init(player: Node2D, health_mult: float, speed_mult: float) -> void:
 	target = player
@@ -88,31 +80,36 @@ func _update_procedural_animations(delta: float) -> void:
 	_squash_timer -= delta
 
 	if _flash_timer > 0.0:
-		visual.color = COLOR_HIT
+		visual.modulate = COLOR_HIT
 	else:
-		visual.color = body_color
+		visual.modulate = Color.WHITE
+
+	var base_scale: Vector2 = _anim_scale
 
 	if _squash_timer > 0.0:
 		var t: float = _squash_timer / SQUASH_DURATION
-		_anim_scale = Vector2(1.0 + 0.4 * t, 1.0 - 0.4 * t)
-		visual.scale = _anim_scale
+		visual.scale = base_scale * Vector2(1.0 + 0.4 * t, 1.0 - 0.4 * t)
 		return
 
 	if _move_dir != Vector2.ZERO:
 		var bounce: float = sin(_time * 14.0) * 0.05
 		var sx: float = 1.0 + abs(_move_dir.x) * 0.15 - abs(_move_dir.y) * 0.08 + bounce
 		var sy: float = 1.0 + abs(_move_dir.y) * 0.15 - abs(_move_dir.x) * 0.08 - bounce
-		_anim_scale = _anim_scale.lerp(Vector2(sx, sy), 0.2)
+		visual.scale = visual.scale.lerp(base_scale * Vector2(sx, sy), 0.2)
 	else:
-		_anim_scale = _anim_scale.lerp(Vector2.ONE, 0.15)
-
-	visual.scale = _anim_scale
+		visual.scale = visual.scale.lerp(base_scale, 0.15)
 
 func _physics_process(delta: float) -> void:
 	if target == null or _dead:
 		return
 	_move_dir = (target.global_position - global_position).normalized()
 	global_position += _move_dir * speed * delta
+	
+	if visual:
+		if _move_dir.x < 0:
+			visual.flip_h = true
+		elif _move_dir.x > 0:
+			visual.flip_h = false
 
 func _on_body_entered(body_node: Node) -> void:
 	if body_node.is_in_group("player"):

@@ -1,21 +1,23 @@
 [gd_scene format=3 uid="uid://cy1h44om4nasl"]
 
 [ext_resource type="Script" uid="uid://snq8wfiu7uty" path="res://scripts/projectile.gd" id="1_c8fcr"]
+[ext_resource type="Texture2D" uid="uid://br7mpwkfiw5x3" path="res://assets/sprites/sprite.png" id="2_q3m7n"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6aapk"]
-size = Vector2(8, 8)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_q3m7n"]
+radius = 4.0
+height = 23.0
 
 [node name="Projectile" type="Area2D" unique_id=1338593265]
 collision_layer = 3
 collision_mask = 2
 script = ExtResource("1_c8fcr")
 
-[node name="Body" type="ColorRect" parent="." unique_id=359396543]
-offset_left = -5.0
-offset_top = -5.0
-offset_right = 5.0
-offset_bottom = 5.0
-color = Color(0.94509804, 0.76862746, 0.05882353, 1)
+[node name="Body" type="Sprite2D" parent="." unique_id=1155058582]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_q3m7n")
+region_enabled = true
+region_rect = Rect2(396.25574, 206.13733, 106.040344, 51.628082)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=264677913]
-shape = SubResource("RectangleShape2D_6aapk")
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_q3m7n")

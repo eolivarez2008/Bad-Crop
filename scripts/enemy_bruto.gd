@@ -5,10 +5,7 @@ func _ready() -> void:
 	max_health = 90
 	health = 90
 	contact_damage = 25
-	body_size = Vector2(52, 52)
-	body_color = Color(0.55, 0.20, 0.80)
 	pepper_table = [
-		{ "type": 1, "chance": 0.50 },
-		{ "type": 2, "chance": 0.50 },
+		{ "type": 2, "chance": 1 },
 	]
 	super._ready()

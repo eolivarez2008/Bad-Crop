@@ -23,11 +23,19 @@ SaveManager="*uid://dwecbflynt2vq"
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
+window/size/mode=2
+window/size/initial_position_type=0
+window/size/borderless=true
 window/stretch/mode="canvas_items"
 
 [global_group]
 
 enemies=""
+
+[gui]
+
+theme/custom="uid://bwjnbdar0lyfj"
+theme/custom_font="uid://bwjnbdar0lyfj"
 
 [physics]
 
@@ -35,6 +43,8 @@ enemies=""
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+viewport/hdr_2d=true

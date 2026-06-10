@@ -1,3 +1,4 @@
+@tool
 extends CharacterBody2D
 
 @export var shake_decay := 4.0
@@ -11,9 +12,14 @@ var max_health := 100
 var health := 100
 var peppers := 0
 
+@export var attack_range := 450.0:
+	set(value):
+		attack_range = value
+		queue_redraw()
+
 @onready var weapon_left := $WeaponLeft
 @onready var weapon_right := $WeaponRight
-@onready var hud: CanvasLayer = $"../hud"
+var hud: CanvasLayer = null
 @onready var body := $Body
 @onready var camera := $Camera
 
@@ -31,17 +37,19 @@ var _last_direction := Vector2.ZERO
 
 func _ready() -> void:
 	add_to_group("player")
-	weapon_left.init(10, 1.0)
-	weapon_right.init(10, 1.5)
+	
+	if Engine.is_editor_hint():
+		return
+		
+	if weapon_left:
+		weapon_left.init(10, 1.0)
+	if weapon_right:
+		weapon_right.init(10, 1.5)
 	if hud:
 		hud.update_health(health, max_health)
 
 func add_peppers(amount: int) -> void:
 	peppers += amount
-
-func set_nearest_enemy(enemy: Node2D) -> void:
-	weapon_left.set_target(enemy)
-	weapon_right.set_target(enemy)
 
 func take_damage(amount: int) -> void:
 	health -= amount
@@ -53,9 +61,34 @@ func take_damage(amount: int) -> void:
 		hud.update_health(health, max_health)
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+		return
+		
 	_time += delta
+	_update_nearest_enemy()
 	_update_procedural_animations(delta)
 	_update_camera_effects(delta)
+
+func _update_nearest_enemy() -> void:
+	var closest_enemy: Node2D = null
+	var min_distance := INF
+	
+	var enemies := get_tree().get_nodes_in_group("enemies")
+	
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			var dist := global_position.distance_to(enemy.global_position)
+			if dist < min_distance and dist <= attack_range:
+				min_distance = dist
+				closest_enemy = enemy
+				
+	if weapon_left:
+		weapon_left.set_target(closest_enemy)
+	if weapon_right:
+		weapon_right.set_target(closest_enemy)
+		
+	queue_redraw()
 
 func _update_camera_effects(delta: float) -> void:
 	if not camera:
@@ -73,6 +106,8 @@ func _update_camera_effects(delta: float) -> void:
 		camera.position += shake_offset
 
 func _update_procedural_animations(delta: float) -> void:
+	if not body:
+		return
 	_flash_timer -= delta
 	_squash_timer -= delta
 	if _flash_timer > 0.0:
@@ -96,6 +131,9 @@ func _update_procedural_animations(delta: float) -> void:
 	scale = _anim_scale
 
 func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+		
 	var direction := Vector2.ZERO
 	direction.x = Input.get_axis("move_left", "move_right")
 	direction.y = Input.get_axis("move_up", "move_down")
@@ -103,11 +141,16 @@ func _physics_process(delta: float) -> void:
 		direction = direction.normalized()
 		_is_moving = true
 		_last_direction = direction
-		if direction.x < 0:
-			body.flip_h = true
-		elif direction.x > 0:
-			body.flip_h = false
+		if body:
+			if direction.x < 0:
+				body.flip_h = true
+			elif direction.x > 0:
+				body.flip_h = false
 	else:
 		_is_moving = false
 	velocity = direction * speed
 	move_and_slide()
+
+func _draw() -> void:
+	var circle_color := Color(0.0, 0.6, 0.2, 0.15)
+	draw_circle(Vector2.ZERO, attack_range, circle_color)

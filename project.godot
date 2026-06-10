@@ -32,7 +32,6 @@ window/stretch/mode="canvas_items"
 [global_group]
 
 enemies=""
-projectile=""
 
 [gui]
 

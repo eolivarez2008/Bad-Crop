@@ -2,7 +2,7 @@ extends Node2D
 
 const ProjectileScene := preload("res://scenes/projectile.tscn")
 
-@export var flip_base: bool = false
+var flip_base: bool = false
 
 var damage := 10
 var fire_rate := 1.0

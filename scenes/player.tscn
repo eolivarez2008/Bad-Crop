@@ -10,7 +10,6 @@ height = 48.0
 
 [node name="Player" type="CharacterBody2D" unique_id=553080397]
 script = ExtResource("1_3vyb7")
-camera_margin = 200.0
 
 [node name="Body" type="Sprite2D" parent="." unique_id=1252013559]
 texture_filter = 1
@@ -25,6 +24,11 @@ position = Vector2(-4, 1)
 shape = SubResource("CapsuleShape2D_qhqgy")
 
 [node name="Camera" type="Camera2D" parent="." unique_id=681890891]
+limit_left = -400
+limit_top = -570
+limit_right = 1680
+limit_bottom = 1290
+position_smoothing_enabled = true
 
 [node name="WeaponLeft" parent="." unique_id=952453100 instance=ExtResource("2_g2els")]
 position = Vector2(-24, 0)

@@ -5,7 +5,6 @@ extends CanvasLayer
 @onready var menu_button := $Panel/Layout/MenuButton
 
 func _ready() -> void:
-	process_mode = PROCESS_MODE_ALWAYS
 	menu_button.pressed.connect(_on_menu_pressed)
 
 func show_game_over(wave_reached: int) -> void:
@@ -13,7 +12,6 @@ func show_game_over(wave_reached: int) -> void:
 	if wave_reached > best:
 		SaveManager.save_best_score(wave_reached)
 		best = wave_reached
-
 	wave_label.text = "Vague atteinte : " + str(wave_reached)
 	best_score_label.text = "Meilleur score : " + str(best)
 	visible = true

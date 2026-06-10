@@ -22,7 +22,6 @@ var _flash_timer: float = 0.0
 var _squash_timer: float = 0.0
 
 @onready var visual := $Body
-@onready var col_shape := $CollisionShape2D
 
 func _ready() -> void:
 	_apply_visuals()

@@ -33,8 +33,6 @@ func _process(delta: float) -> void:
 			_heat_lines.remove_at(i)
 		i -= 1
 
-	force_parent_update()
-
 func _spawn_heat_line(start_y: float = 550.0) -> void:
 	_heat_lines.append({
 		"pos": Vector2(randf_range(300, 900), start_y),
@@ -183,15 +181,6 @@ func _draw_ellipse_flat(center: Vector2, rx: float, ry: float, color: Color, seg
 		pts.append(center + Vector2(cos(angle) * rx, sin(angle) * ry))
 	draw_colored_polygon(pts, color)
 
-func _draw_ellipse_contour(center: Vector2, rx: float, ry: float, color: Color, segments: int, width: float) -> void:
-	var step: float = TAU / segments
-	for i: int in range(segments):
-		var a1: float = step * i
-		var a2: float = step * (i + 1)
-		var p1 := center + Vector2(cos(a1) * rx, sin(a1) * ry)
-		var p2 := center + Vector2(cos(a2) * rx, sin(a2) * ry)
-		draw_line(p1, p2, color, width, true)
-
 func _draw_ellipse_arc(center: Vector2, rx: float, ry: float, color: Color, segments: int, width: float, angle_start: float, angle_end: float) -> void:
 	var step: float = TAU / segments
 	for i: int in range(segments):
@@ -232,7 +221,3 @@ func _draw_dashed_ellipse(center: Vector2, rx: float, ry: float, color: Color, s
 			drawing = true
 			acc = 0.0
 		i += 1
-
-func force_parent_update() -> void:
-	if not Engine.is_editor_hint():
-		queue_redraw()

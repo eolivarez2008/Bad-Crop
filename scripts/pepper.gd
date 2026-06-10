@@ -9,9 +9,9 @@ const VALUES := {
 }
 
 @export var REGIONS := {
-	Type.GREEN: Rect2(890, 40, 60, 80),
-	Type.YELLOW: Rect2(890, 140, 60, 80),
-	Type.RED: Rect2(890, 240, 60, 80) 
+	Type.GREEN: Rect2(402, 287, 51, 52),
+	Type.YELLOW: Rect2(500, 287, 51, 52),
+	Type.RED: Rect2(591, 287, 51, 52) 
 }
 
 var type: Type = Type.GREEN

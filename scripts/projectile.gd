@@ -16,7 +16,6 @@ func get_damage() -> int:
 	return damage
 
 func _ready() -> void:
-	add_to_group("projectile")
 	body_entered.connect(_on_body_entered)
 
 func _physics_process(delta: float) -> void:

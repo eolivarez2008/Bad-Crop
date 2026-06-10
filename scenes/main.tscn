@@ -46,4 +46,9 @@ process_mode = 3
 
 [node name="GameOver" parent="." unique_id=1318348129 instance=ExtResource("7_o6xl0")]
 
+[node name="DeathWatchTimer" type="Timer" parent="." unique_id=1271463190]
+wait_time = 0.1
+autostart = true
+
 [connection signal="timeout" from="EnemySpawner/SpawnTimer" to="EnemySpawner" method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="DeathWatchTimer" to="." method="_check_player_dead"]

@@ -25,6 +25,7 @@ func _process(delta: float) -> void:
 	hud.update_health(player.health, player.max_health)
 	hud.update_peppers(player.peppers)
 	hud.update_timer(wave_manager.time_remaining)
+	hud.update_spicy(player.spicy_level, player.spicy_xp, player._xp_for_next_level())
 
 func _on_wave_started(wave_number: int) -> void:
 	hud.update_wave(wave_number)

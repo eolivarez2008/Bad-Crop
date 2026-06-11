@@ -3,36 +3,136 @@
 [ext_resource type="Script" uid="uid://d0chprgae6mfe" path="res://scripts/hud.gd" id="1_ahhtf"]
 [ext_resource type="FontFile" uid="uid://bwjnbdar0lyfj" path="res://assets/fonts/fa-solid-900.woff2" id="2_oo0fn"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6fi6k"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+skew = Vector2(0.29, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ahhtf"]
-bg_color = Color(0.90588236, 0.29803923, 0.23529412, 1)
+bg_color = Color(1, 0, 0, 1)
+skew = Vector2(0.29, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oo0fn"]
+bg_color = Color(0.7987912, 0.7987913, 0.798791, 1)
+skew = Vector2(0, -0.29)
+border_width_left = 2
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ysmq"]
+bg_color = Color(0.91417676, 0.47571713, 0.19175759, 1)
+skew = Vector2(0, -0.29)
+border_width_left = 4
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 4
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="HUD" type="CanvasLayer" unique_id=1956638048]
 script = ExtResource("1_ahhtf")
 
-[node name="Container" type="VBoxContainer" parent="." unique_id=1411824490]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 216.0
-offset_bottom = 76.0
-
-[node name="HealthBar" type="ProgressBar" parent="Container" unique_id=1294278661]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1294278661]
 custom_minimum_size = Vector2(200, 20)
-layout_mode = 2
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 225.0
+offset_bottom = 46.999992
+scale = Vector2(1.4, 1.4)
+theme_override_styles/background = SubResource("StyleBoxFlat_6fi6k")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ahhtf")
 value = 100.0
 show_percentage = false
 
-[node name="PepperCount" type="Label" parent="Container" unique_id=775885209]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_oo0fn")
-text = "\\uf004 0"
+[node name="WaveContainer" type="VBoxContainer" parent="." unique_id=1411824490]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 25.48
+offset_right = 100.0
+offset_bottom = 85.47998
+grow_horizontal = 2
 
-[node name="WaveLabel" type="Label" parent="Container" unique_id=850757229]
+[node name="WaveLabel" type="Label" parent="WaveContainer" unique_id=850757229]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_oo0fn")
+theme_override_font_sizes/font_size = 22
 text = "Vague 1"
+horizontal_alignment = 1
 
-[node name="WaveTimer" type="Label" parent="Container" unique_id=647513382]
+[node name="WaveTimer" type="Label" parent="WaveContainer" unique_id=647513382]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_oo0fn")
+theme_override_font_sizes/font_size = 20
 text = "⏱ 30s"
+horizontal_alignment = 1
+
+[node name="PepperCount" type="Label" parent="." unique_id=775885209]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -241.0
+offset_top = 40.0
+offset_right = -41.0
+offset_bottom = 74.0
+grow_horizontal = 0
+theme_override_fonts/font = ExtResource("2_oo0fn")
+theme_override_font_sizes/font_size = 25
+text = "\\uf004 0"
+horizontal_alignment = 2
+
+[node name="SpicyContainer" type="VBoxContainer" parent="." unique_id=894574473]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -55.265015
+offset_top = -104.5
+offset_right = -24.265015
+offset_bottom = 104.5
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="LevelBar" type="ProgressBar" parent="SpicyContainer" unique_id=1353654498]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_oo0fn")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5ysmq")
+value = 2.0
+fill_mode = 3
+show_percentage = false
+
+[node name="LevelLabel" type="Label" parent="SpicyContainer" unique_id=1950706555]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_oo0fn")
+theme_override_font_sizes/font_size = 11
+text = "LVL 1"
+horizontal_alignment = 1

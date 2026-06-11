@@ -11,7 +11,11 @@ var speed := 200.0
 var max_health := 100
 var health := 100
 var peppers := 0
+var spicy_level := 0
+var spicy_xp := 0
 
+@export var xp_base := 150
+@export var xp_growth := 100
 @export var attack_range := 450.0:
 	set(value):
 		attack_range = value
@@ -50,6 +54,22 @@ func _ready() -> void:
 
 func add_peppers(amount: int) -> void:
 	peppers += amount
+	_add_xp(amount)
+
+func _add_xp(amount: int) -> void:
+	if spicy_level >= 10:
+		return
+	spicy_xp += amount
+	var needed := _xp_for_next_level()
+	while spicy_xp >= needed and spicy_level < 10:
+		spicy_xp -= needed
+		spicy_level += 1
+		needed = _xp_for_next_level()
+		if hud:
+			hud.on_level_up(spicy_level)
+
+func _xp_for_next_level() -> int:
+	return xp_base + (spicy_level - 1) * xp_growth
 
 func take_damage(amount: int) -> void:
 	health -= amount
@@ -152,5 +172,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _draw() -> void:
-	var circle_color := Color(0.0, 0.6, 0.2, 0.15)
-	draw_circle(Vector2.ZERO, attack_range, circle_color)
+	if Engine.is_editor_hint():
+		var circle_color := Color(0.0, 0.6, 0.2, 0.15)
+		draw_circle(Vector2.ZERO, attack_range, circle_color)

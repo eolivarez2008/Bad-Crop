@@ -35,6 +35,7 @@ var _is_moving: bool = false
 var _last_direction := Vector2.ZERO
 var _is_dashing: bool = false
 var hud: CanvasLayer = null
+var _movement_locked := false
 var skills := [
 	{ "req_lvl": 1, "cooldown": 4.0, "max_charges": 3, "current_charges": 3, "current_cooldown": 0.0 },
 	{ "req_lvl": 4, "cooldown": 8.0, "max_charges": 3, "current_charges": 3, "current_cooldown": 0.0 },
@@ -42,6 +43,7 @@ var skills := [
 	{ "req_lvl": 10, "cooldown": 20.0, "max_charges": 3, "current_charges": 3, "current_cooldown": 0.0 }
 ]
 
+const SHOCKWAVE_EFFECT = preload("res://scenes/shockwave_effect.tscn")
 const COLOR_NORMAL := Color(1.0, 1.0, 1.0)
 const COLOR_HIT := Color(10.0, 10.0, 10.0)
 const FLASH_DURATION: float = 0.1
@@ -178,9 +180,29 @@ func _trigger_skill_logic(index: int) -> void:
 	match index:
 		0: _activate_dash()
 		1: _activate_shield()
-		2: print("Compétence 3 activée !")
+		2: _activate_bomb(350.0, 2, 16.0)
 		3: print("Compétence Ultim activée !")
 
+func _activate_bomb(radius: float, time: float, thickness: float) -> void:
+	var wave = SHOCKWAVE_EFFECT.instantiate()
+	
+	wave.target_radius = radius
+	wave.duration = time
+	wave.initial_thickness = thickness
+	wave.global_position = global_position
+	
+	get_tree().current_scene.add_child(wave)
+	
+	_shake_intensity = max(_shake_intensity, radius * 0.05)
+	
+	_movement_locked = true
+	velocity = Vector2.ZERO
+	
+	var lock_tween = create_tween()
+	lock_tween.tween_callback(func():
+		_movement_locked = false
+	).set_delay(0.5)
+	
 func _activate_dash() -> void:
 	_is_dashing = true
 	if dash_particles:
@@ -280,6 +302,11 @@ func _physics_process(delta: float) -> void:
 		return
 		
 	if _is_dashing:
+		move_and_slide()
+		return
+		
+	if _movement_locked:
+		velocity = Vector2.ZERO
 		move_and_slide()
 		return
 		

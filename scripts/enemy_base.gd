@@ -21,12 +21,28 @@ const COLOR_HIT := Color(10.0, 10.0, 10.0)
 var _flash_timer: float = 0.0
 var _squash_timer: float = 0.0
 
+var is_infected: bool = false
+var infected_speed_mult: float = 1.5
+var infected_target: Node2D = null
+var _zigzag_time: float = 0.0
+var _zigzag_seed: float = 0.0
+var _isolation_check_timer: float = 0.0
+const ISOLATION_CHECK_INTERVAL: float = 0.5
+const ISOLATION_RADIUS: float = 600.0
+
 @onready var visual := $Body
+@onready var icon_mind_control: TextureRect = $IconMindControl
+@onready var mind_control_trail: CPUParticles2D = $MindControlTrail
 
 func _ready() -> void:
 	_apply_visuals()
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
+	_zigzag_seed = randf() * TAU
+	if icon_mind_control:
+		icon_mind_control.visible = false
+	if mind_control_trail:
+		mind_control_trail.emitting = false
 
 func _apply_visuals() -> void:
 	if visual:
@@ -70,9 +86,40 @@ func _drop_pepper() -> void:
 	get_tree().current_scene.add_child(pepper)
 	pepper.init(chosen_type)
 
+func infect() -> void:
+	if is_infected or _dead:
+		return
+	is_infected = true
+	if icon_mind_control:
+		icon_mind_control.visible = true
+	if mind_control_trail:
+		mind_control_trail.emitting = true
+	_isolation_check_timer = ISOLATION_CHECK_INTERVAL
+
 func _process(delta: float) -> void:
 	_time += delta
 	_update_procedural_animations(delta)
+	if is_infected:
+		_update_isolation_check(delta)
+
+func _update_isolation_check(delta: float) -> void:
+	_isolation_check_timer -= delta
+	if _isolation_check_timer > 0.0:
+		return
+	_isolation_check_timer = ISOLATION_CHECK_INTERVAL
+
+	if _count_other_infected_in_range() == 0:
+		die(false)
+
+func _count_other_infected_in_range() -> int:
+	var count := 0
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy == self or not is_instance_valid(enemy):
+			continue
+		if enemy.is_infected and not enemy._dead:
+			if global_position.distance_to(enemy.global_position) <= ISOLATION_RADIUS:
+				count += 1
+	return count
 
 func _update_procedural_animations(delta: float) -> void:
 	_flash_timer -= delta
@@ -80,6 +127,8 @@ func _update_procedural_animations(delta: float) -> void:
 
 	if _flash_timer > 0.0:
 		visual.modulate = COLOR_HIT
+	elif is_infected:
+		visual.modulate = Color(1.6, 0.6, 1.8)
 	else:
 		visual.modulate = Color.WHITE
 
@@ -99,18 +148,64 @@ func _update_procedural_animations(delta: float) -> void:
 		visual.scale = visual.scale.lerp(base_scale, 0.15)
 
 func _physics_process(delta: float) -> void:
-	if target == null or _dead:
+	if _dead:
+		return
+
+	if is_infected:
+		_physics_infected(delta)
+		return
+
+	if target == null:
 		return
 	_move_dir = (target.global_position - global_position).normalized()
 	global_position += _move_dir * speed * delta
-	
+
 	if visual:
 		if _move_dir.x < 0:
 			visual.flip_h = true
 		elif _move_dir.x > 0:
 			visual.flip_h = false
 
+func _physics_infected(delta: float) -> void:
+	_zigzag_time += delta
+
+	if infected_target == null or not is_instance_valid(infected_target) or infected_target.is_infected == false or infected_target._dead:
+		infected_target = _find_nearest_infected()
+
+	if infected_target == null:
+		_move_dir = Vector2.ZERO
+		return
+
+	var base_dir := (infected_target.global_position - global_position).normalized()
+	var perp := Vector2(-base_dir.y, base_dir.x)
+	var zigzag: float = sin(_zigzag_time * 8.0 + _zigzag_seed) * 0.6
+	_move_dir = (base_dir + perp * zigzag).normalized()
+
+	global_position += _move_dir * speed * infected_speed_mult * delta
+
+	if visual:
+		if _move_dir.x < 0:
+			visual.flip_h = true
+		elif _move_dir.x > 0:
+			visual.flip_h = false
+
+func _find_nearest_infected() -> Node2D:
+	var closest: Node2D = null
+	var min_dist := INF
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy == self or not is_instance_valid(enemy):
+			continue
+		if not enemy.is_infected or enemy._dead:
+			continue
+		var dist: float = global_position.distance_to(enemy.global_position)
+		if dist < min_dist:
+			min_dist = dist
+			closest = enemy
+	return closest
+
 func _on_body_entered(body_node: Node) -> void:
+	if is_infected:
+		return
 	if body_node.is_in_group("player"):
 		body_node.take_damage(contact_damage)
 		die(false)
@@ -119,3 +214,9 @@ func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("projectile"):
 		take_damage(area.get_damage())
 		area.queue_free()
+		return
+
+	if is_infected and area.is_in_group("enemies") and area.is_infected and not area._dead and not _dead:
+		die(false)
+		if is_instance_valid(area):
+			area.die(false)

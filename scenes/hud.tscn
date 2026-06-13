@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cmq6oermachep" path="res://assets/sprites/sprint.png" id="3_6fi6k"]
 [ext_resource type="Texture2D" uid="uid://dw8vi03w4ytqm" path="res://assets/sprites/shield-reflect.png" id="4_5pdws"]
 [ext_resource type="Texture2D" uid="uid://br3m3cy8acnr6" path="res://assets/sprites/mine-explosion.png" id="5_hd3ao"]
-[ext_resource type="Texture2D" uid="uid://hpdmnjeud4x1" path="res://assets/sprites/bombing-run.png" id="6_0i1j5"]
+[ext_resource type="Texture2D" uid="uid://b4i60v8y0oog1" path="res://assets/sprites/psychic-waves.png" id="6_5pdws"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6fi6k"]
 bg_color = Color(0.8, 0.8, 0.8, 1)
@@ -174,7 +174,7 @@ offset_bottom = 74.0
 grow_horizontal = 0
 theme_override_fonts/font = ExtResource("2_oo0fn")
 theme_override_font_sizes/font_size = 25
-text = "\\uf004 0"
+text = "🌶️ 0"
 horizontal_alignment = 2
 
 [node name="SpicyContainer" type="VBoxContainer" parent="." unique_id=894574473]
@@ -533,7 +533,7 @@ size_flags_vertical = 4
 [node name="Icon" type="TextureRect" parent="SkillsContainer/Skill4/Slot4/Container" unique_id=2069957707]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-texture = ExtResource("6_0i1j5")
+texture = ExtResource("6_5pdws")
 expand_mode = 1
 stretch_mode = 5
 

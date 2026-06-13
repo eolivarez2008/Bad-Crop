@@ -181,7 +181,15 @@ func _trigger_skill_logic(index: int) -> void:
 		0: _activate_dash()
 		1: _activate_shield()
 		2: _activate_bomb(350.0, 2, 16.0)
-		3: print("Compétence Ultim activée !")
+		3: _activate_mind_control()
+
+func _activate_mind_control() -> void:
+	var enemies := get_tree().get_nodes_in_group("enemies")
+	for enemy in enemies:
+		if is_instance_valid(enemy) and randf() <= 0.7:
+			enemy.infect()
+	if hud:
+		hud.play_mind_control_effect()
 
 func _activate_bomb(radius: float, time: float, thickness: float) -> void:
 	var wave = SHOCKWAVE_EFFECT.instantiate()

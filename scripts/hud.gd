@@ -3,6 +3,9 @@ extends CanvasLayer
 const ICON_PEPPER: String = "\uf816"
 const ICON_WAVE: String = "\uf091"
 const ICON_CLOCK: String = "\uf017"
+const ICON_LOCK: String = "\uf023"
+
+const COLOR_MINDCONTROL := Color(0.85, 0.2, 1.0, 1.0)
 
 @onready var health_bar: ProgressBar = $HealthBar
 @onready var shield_overlay: ProgressBar = $HealthBar/ShieldOverlay
@@ -23,11 +26,19 @@ const ICON_CLOCK: String = "\uf017"
 
 func _ready() -> void:
 	update_input_labels()
+	_initialize_lock_icons()
 	speed_lines.visible = false
 	speed_lines.pivot_offset = speed_lines.size / 2.0
 	if is_instance_valid(health_bar):
 		var fill_style: StyleBoxFlat = health_bar.get_theme_stylebox("fill").duplicate()
 		health_bar.add_theme_stylebox_override("fill", fill_style)
+
+func _initialize_lock_icons() -> void:
+	for slot in slots:
+		if is_instance_valid(slot):
+			var icon_label = slot.get_node_or_null("LockOverlay/Icon") as Label
+			if icon_label:
+				icon_label.text = ICON_LOCK
 
 func play_dash_effect(direction: Vector2) -> void:
 	var old_tween = speed_lines.get_meta("dash_tween", null)
@@ -49,6 +60,41 @@ func play_dash_effect(direction: Vector2) -> void:
 	tween.tween_property(speed_lines, "modulate:a", 0.0, 0.2)\
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tween.tween_callback(func(): speed_lines.visible = false)
+
+func play_mind_control_effect() -> void:
+	var vignette := TextureRect.new()
+	vignette.texture = _generate_vignette_texture()
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	vignette.stretch_mode = TextureRect.STRETCH_SCALE
+	vignette.modulate = Color(1, 1, 1, 0)
+	add_child(vignette)
+
+	var tween := create_tween()
+	tween.tween_property(vignette, "modulate:a", 1.0, 0.06)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(vignette, "modulate:a", 0.0, 0.44)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_callback(vignette.queue_free)
+
+func _generate_vignette_texture() -> GradientTexture2D:
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 0.7, 1.0])
+	gradient.colors = PackedColorArray([
+		Color(COLOR_MINDCONTROL.r, COLOR_MINDCONTROL.g, COLOR_MINDCONTROL.b, 0.0),
+		Color(COLOR_MINDCONTROL.r, COLOR_MINDCONTROL.g, COLOR_MINDCONTROL.b, 0.0),
+		Color(COLOR_MINDCONTROL.r * 0.4, COLOR_MINDCONTROL.g * 0.4, COLOR_MINDCONTROL.b * 0.4, 0.95)
+	])
+
+	var tex := GradientTexture2D.new()
+	tex.gradient = gradient
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.0)
+	tex.width = 1024
+	tex.height = 1024
+	return tex
 
 func flash_white(duration: float = 0.08) -> void:
 	var flash := ColorRect.new()
@@ -129,7 +175,7 @@ func on_level_up(level: int) -> void:
 func update_skill_lock(slot_index: int, is_locked: bool) -> void:
 	if slot_index >= slots.size() or not is_instance_valid(slots[slot_index]):
 		return
-	var lock_overlay = slots[slot_index].get_node("LockOverlay")
+	var lock_overlay = slots[slot_index].get_node_or_null("LockOverlay")
 	if lock_overlay:
 		lock_overlay.visible = is_locked
 

@@ -1,13 +1,26 @@
 [gd_scene format=3 uid="uid://b2l2ei2h80u7q"]
 
 [ext_resource type="Script" uid="uid://cehuaewcgis8o" path="res://scripts/enemy_slimek.gd" id="1_slimek"]
-[ext_resource type="Texture2D" uid="uid://br7mpwkfiw5x3" path="res://assets/sprites/sprite.png" id="2_qfioo"]
+[ext_resource type="Texture2D" uid="uid://ot32qosovvxm" path="res://assets/sprites/sprite.png" id="2_qfioo"]
+[ext_resource type="Texture2D" uid="uid://2oxa4n0hgqtj" path="res://assets/sprites/eye.png" id="3_bwp1s"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qfioo"]
 radius = 19.0
 
+[sub_resource type="Gradient" id="Gradient_mindcontrol"]
+colors = PackedColorArray(0.85, 0.2, 1, 0.9, 0.85, 0.2, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_mindcontrol"]
+gradient = SubResource("Gradient_mindcontrol")
+width = 16
+height = 16
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [node name="EnemySlimek" type="Area2D" unique_id=958341226 groups=["enemies"]]
 collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_slimek")
 
 [node name="Body" type="Sprite2D" parent="." unique_id=604162871]
@@ -19,3 +32,34 @@ region_rect = Rect2(194.08832, 85.91928, 95.832184, 74.55591)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1617930675]
 position = Vector2(2, 2)
 shape = SubResource("CircleShape2D_qfioo")
+
+[node name="IconMindControl" type="TextureRect" parent="." unique_id=1207219402]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -32.0
+offset_top = -55.0
+offset_right = 48.11331
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.805, 0.805)
+texture = ExtResource("3_bwp1s")
+expand_mode = 3
+
+[node name="MindControlTrail" type="CPUParticles2D" parent="." unique_id=847984589]
+emitting = false
+amount = 24
+texture = SubResource("GradientTexture2D_mindcontrol")
+lifetime = 0.4
+direction = Vector2(0, 0)
+spread = 30.0
+gravity = Vector2(0, 0)
+scale_amount_min = 0.6
+scale_amount_max = 1.2
+color = Color(0.85, 0.2, 1, 0.8)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

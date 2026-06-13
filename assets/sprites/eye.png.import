@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hpdmnjeud4x1"
-path="res://.godot/imported/bombing-run.png-a7e9561dff1fdd5ab48efede5e405913.ctex"
+uid="uid://2oxa4n0hgqtj"
+path="res://.godot/imported/eye.png-5185ed999e736ecd6f8a37c7e87fba86.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/bombing-run.png"
-dest_files=["res://.godot/imported/bombing-run.png-a7e9561dff1fdd5ab48efede5e405913.ctex"]
+source_file="res://assets/sprites/eye.png"
+dest_files=["res://.godot/imported/eye.png-5185ed999e736ecd6f8a37c7e87fba86.ctex"]
 
 [params]
 

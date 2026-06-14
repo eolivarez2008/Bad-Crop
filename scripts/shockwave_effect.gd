@@ -49,9 +49,9 @@ func _on_damage_area_area_entered(area: Area2D) -> void:
 		
 	if target.is_in_group("enemies"):
 		if target.has_method("die"):
-			target.die(true)
-		elif area.has_method("die"):
-			area.die(true)
+			target.die(true, true)
+		elif is_instance_valid(area) and area.has_method("die"):
+			area.die(true, true)
 		else:
 			target.queue_free()
 

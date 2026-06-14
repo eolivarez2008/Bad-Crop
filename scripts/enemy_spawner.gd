@@ -52,6 +52,7 @@ func _spawn_with_indicator(spawn_pos: Vector2, enemy_key: String) -> void:
 	var indicator := IndicatorScene.instantiate() as Sprite2D
 	indicator.global_position = spawn_pos
 	indicator.modulate = Color(1, 0, 0, 0.8)
+	indicator.add_to_group("indicators")
 	get_parent().add_child(indicator)
 	
 	var tween := create_tween().set_loops(3)
@@ -59,6 +60,8 @@ func _spawn_with_indicator(spawn_pos: Vector2, enemy_key: String) -> void:
 	tween.tween_property(indicator, "modulate:a", 0.8, INDICATOR_DURATION / 6.0)
 	
 	tween.finished.connect(func():
+		if not is_instance_valid(indicator):
+			return
 		indicator.queue_free()
 		if player == null:
 			return

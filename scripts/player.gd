@@ -148,7 +148,7 @@ func _update_skills_cooldown(delta: float) -> void:
 			hud.update_skill_ui(i, skill["current_charges"], skill["max_charges"], pct, skill["current_cooldown"])
 
 func _unhandled_input(event: InputEvent) -> void:
-	if Engine.is_editor_hint():
+	if Engine.is_editor_hint() or _movement_locked:
 		return
 		
 	if event.is_action_pressed("skill_1"): _use_skill(0)
@@ -247,6 +247,11 @@ func _activate_shield() -> void:
 		hud.set_shield_active(true)
 
 func _update_nearest_enemy() -> void:
+	if _movement_locked:
+		if weapon_left: weapon_left.set_target(null)
+		if weapon_right: weapon_right.set_target(null)
+		return
+
 	var closest_enemy: Node2D = null
 	var min_distance := INF
 	
@@ -339,3 +344,9 @@ func _draw() -> void:
 	if Engine.is_editor_hint() and typeof(attack_range) == TYPE_FLOAT:
 		var circle_color := Color(0.0, 0.6, 0.2, 0.15)
 		draw_circle(Vector2.ZERO, attack_range, circle_color)
+
+func set_active(active: bool) -> void:
+	_movement_locked = not active
+	if not active:
+		velocity = Vector2.ZERO
+		_is_moving = false

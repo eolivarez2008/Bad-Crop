@@ -7,6 +7,20 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_qfioo"]
 radius = 19.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0awvt"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aw3p2"]
+bg_color = Color(1, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [sub_resource type="Gradient" id="Gradient_mindcontrol"]
 colors = PackedColorArray(0.85, 0.2, 1, 0.9, 0.85, 0.2, 1, 0)
 
@@ -17,6 +31,18 @@ height = 16
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bwp1s"]
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = 80.0
+initial_velocity_max = 220.0
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+gravity = Vector3(0, 300, 0)
+scale_min = 2.0
+scale_max = 5.0
+color = Color(0.7, 0.04, 0.04, 1)
 
 [node name="EnemySlimek" type="Area2D" unique_id=958341226 groups=["enemies"]]
 collision_layer = 2
@@ -32,6 +58,16 @@ region_rect = Rect2(194.08832, 85.91928, 95.832184, 74.55591)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1617930675]
 position = Vector2(2, 2)
 shape = SubResource("CircleShape2D_qfioo")
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1142004567]
+offset_left = -22.0
+offset_top = -29.0
+offset_right = 22.0
+offset_bottom = -24.0
+theme_override_styles/background = SubResource("StyleBoxFlat_0awvt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_aw3p2")
+value = 100.0
+show_percentage = false
 
 [node name="IconMindControl" type="TextureRect" parent="." unique_id=1207219402]
 visible = false
@@ -61,5 +97,13 @@ gravity = Vector2(0, 0)
 scale_amount_min = 0.6
 scale_amount_max = 1.2
 color = Color(0.85, 0.2, 1, 0.8)
+
+[node name="BloodSplatter" type="GPUParticles2D" parent="." unique_id=1505948366]
+emitting = false
+amount = 28
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.95
+process_material = SubResource("ParticleProcessMaterial_bwp1s")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

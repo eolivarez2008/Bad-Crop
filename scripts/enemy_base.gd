@@ -33,6 +33,8 @@ const ISOLATION_RADIUS: float = 600.0
 @onready var visual := $Body
 @onready var icon_mind_control: TextureRect = $IconMindControl
 @onready var mind_control_trail: CPUParticles2D = $MindControlTrail
+@onready var health_bar: ProgressBar = $HealthBar
+@onready var blood_splatter: GPUParticles2D = $BloodSplatter
 
 func _ready() -> void:
 	_apply_visuals()
@@ -43,6 +45,16 @@ func _ready() -> void:
 		icon_mind_control.visible = false
 	if mind_control_trail:
 		mind_control_trail.emitting = false
+	if health_bar:
+		health_bar.visible = false
+
+func _update_health_bar() -> void:
+	if not is_instance_valid(health_bar):
+		return
+	var pct := float(health) / float(max_health)
+	health_bar.max_value = max_health
+	health_bar.value = health
+	health_bar.visible = pct < 1.0 and not is_infected
 
 func _apply_visuals() -> void:
 	if visual:
@@ -61,16 +73,30 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	_flash_timer = FLASH_DURATION
 	_squash_timer = SQUASH_DURATION
+	_update_health_bar()
 	if health <= 0:
-		die(true)
+		die(true, true)
 
-func die(should_drop: bool) -> void:
+func die(should_drop: bool, spawn_blood: bool) -> void:
 	if _dead:
 		return
 	_dead = true
+	
 	if should_drop:
 		_drop_pepper()
+		
+	if spawn_blood:
+		_spawn_blood_splatter()
+		
 	queue_free()
+
+func _spawn_blood_splatter() -> void:
+	if not is_instance_valid(blood_splatter):
+		return
+	blood_splatter.reparent(get_tree().current_scene)
+	blood_splatter.emitting = true
+	var timer := blood_splatter.get_tree().create_timer(blood_splatter.lifetime + 0.1)
+	timer.timeout.connect(blood_splatter.queue_free)
 
 func _drop_pepper() -> void:
 	var roll: float = randf()
@@ -95,6 +121,7 @@ func infect() -> void:
 	if mind_control_trail:
 		mind_control_trail.emitting = true
 	_isolation_check_timer = ISOLATION_CHECK_INTERVAL
+	_update_health_bar()
 
 func _process(delta: float) -> void:
 	_time += delta
@@ -109,7 +136,7 @@ func _update_isolation_check(delta: float) -> void:
 	_isolation_check_timer = ISOLATION_CHECK_INTERVAL
 
 	if _count_other_infected_in_range() == 0:
-		die(false)
+		die(false, true)
 
 func _count_other_infected_in_range() -> int:
 	var count := 0
@@ -208,7 +235,7 @@ func _on_body_entered(body_node: Node) -> void:
 		return
 	if body_node.is_in_group("player"):
 		body_node.take_damage(contact_damage)
-		die(false)
+		die(false, false)
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.is_in_group("projectile"):
@@ -217,6 +244,6 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	if is_infected and area.is_in_group("enemies") and area.is_infected and not area._dead and not _dead:
-		die(false)
+		die(false, true)
 		if is_instance_valid(area):
-			area.die(false)
+			area.die(false, true)

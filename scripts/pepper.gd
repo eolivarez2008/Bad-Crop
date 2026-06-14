@@ -25,6 +25,9 @@ var target_player: CharacterBody2D = null
 
 @onready var body: Sprite2D = $Body
 
+func _ready() -> void:
+	add_to_group("peppers")
+
 func init(t: Type) -> void:
 	type = t
 	value = VALUES[t]

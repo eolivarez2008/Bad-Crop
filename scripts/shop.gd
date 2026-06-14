@@ -31,7 +31,6 @@ func init(player: Node) -> void:
 func open() -> void:
 	_refresh_display()
 	visible = true
-	get_tree().paused = true
 
 func _refresh_display() -> void:
 	pepper_display.text = ICON_PEPPER + " " + str(_player.peppers)
@@ -83,5 +82,4 @@ func _ready() -> void:
 
 func _on_close_pressed() -> void:
 	visible = false
-	get_tree().paused = false
 	emit_signal("closed")

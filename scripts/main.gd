@@ -33,16 +33,34 @@ func _on_wave_started(wave_number: int) -> void:
 	hud.update_wave(wave_number)
 
 func _on_wave_ended(wave_number: int) -> void:
+	player.set_active(false)
+	_clear_indicators()
+	_clear_peppers()
 	_clear_enemies()
 	_regen_player()
+	await get_tree().create_timer(0.6).timeout
 	shop.open()
 
 func _on_shop_closed() -> void:
+	player.set_active(true)
 	wave_manager.start_next_wave()
 
 func _clear_enemies() -> void:
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		enemy.queue_free()
+		enemy.die(false, true)
+
+func _clear_indicators() -> void:
+	for indicator in get_tree().get_nodes_in_group("indicators"):
+		if is_instance_valid(indicator):
+			indicator.queue_free()
+
+func _clear_peppers() -> void:
+	for pepper in get_tree().get_nodes_in_group("peppers"):
+		if is_instance_valid(pepper):
+			var tween := pepper.create_tween()
+			tween.tween_property(pepper, "modulate:a", 0.0, 1.5)\
+				.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			tween.tween_callback(pepper.queue_free)
 
 func _regen_player() -> void:
 	player.health = player.max_health

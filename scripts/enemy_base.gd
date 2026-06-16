@@ -1,4 +1,4 @@
-extends Area2D
+extends CharacterBody2D
 
 const PepperScene := preload("res://scenes/pepper.tscn")
 
@@ -30,6 +30,8 @@ var _isolation_check_timer: float = 0.0
 const ISOLATION_CHECK_INTERVAL: float = 0.5
 const ISOLATION_RADIUS: float = 600.0
 
+@onready var nav_agent := $NavigationAgent2D
+@onready var hitbox := $Hitbox
 @onready var visual := $Body
 @onready var icon_mind_control: TextureRect = $IconMindControl
 @onready var mind_control_trail: CPUParticles2D = $MindControlTrail
@@ -37,9 +39,12 @@ const ISOLATION_RADIUS: float = 600.0
 @onready var blood_splatter: GPUParticles2D = $BloodSplatter
 
 func _ready() -> void:
+	add_to_group("enemies")
 	_apply_visuals()
-	body_entered.connect(_on_body_entered)
-	area_entered.connect(_on_area_entered)
+		
+	if hitbox:
+		hitbox.body_entered.connect(_on_body_entered)
+		hitbox.area_entered.connect(_on_area_entered)
 	_zigzag_seed = randf() * TAU
 	if icon_mind_control:
 		icon_mind_control.visible = false
@@ -174,47 +179,64 @@ func _update_procedural_animations(delta: float) -> void:
 	else:
 		visual.scale = visual.scale.lerp(base_scale, 0.15)
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if _dead:
 		return
 
 	if is_infected:
-		_physics_infected(delta)
+		_physics_infected(_delta)
 		return
 
 	if target == null:
 		return
-	_move_dir = (target.global_position - global_position).normalized()
-	global_position += _move_dir * speed * delta
 
-	if visual:
-		if _move_dir.x < 0:
-			visual.flip_h = true
-		elif _move_dir.x > 0:
-			visual.flip_h = false
-
-func _physics_infected(delta: float) -> void:
-	_zigzag_time += delta
-
-	if infected_target == null or not is_instance_valid(infected_target) or infected_target.is_infected == false or infected_target._dead:
-		infected_target = _find_nearest_infected()
-
-	if infected_target == null:
+	nav_agent.target_position = target.global_position
+	
+	if nav_agent.is_navigation_finished():
+		velocity = Vector2.ZERO
 		_move_dir = Vector2.ZERO
 		return
 
-	var base_dir := (infected_target.global_position - global_position).normalized()
+	var next_path_pos: Vector2 = nav_agent.get_next_path_position()
+	_move_dir = global_position.direction_to(next_path_pos)
+	
+	velocity = _move_dir * speed
+	move_and_slide()
+
+	if visual and _move_dir.x != 0:
+		visual.flip_h = _move_dir.x < 0
+
+func _physics_infected(_delta: float) -> void:
+	_zigzag_time += _delta
+
+	if infected_target == null or not is_instance_valid(infected_target) or !infected_target.is_infected or infected_target._dead:
+		infected_target = _find_nearest_infected()
+
+	if infected_target == null:
+		velocity = Vector2.ZERO
+		_move_dir = Vector2.ZERO
+		move_and_slide()
+		return
+
+	nav_agent.target_position = infected_target.global_position
+	
+	if nav_agent.is_navigation_finished():
+		velocity = Vector2.ZERO
+		_move_dir = Vector2.ZERO
+		return
+
+	var next_path_pos: Vector2 = nav_agent.get_next_path_position()
+	var base_dir := global_position.direction_to(next_path_pos)
+	
 	var perp := Vector2(-base_dir.y, base_dir.x)
 	var zigzag: float = sin(_zigzag_time * 8.0 + _zigzag_seed) * 0.6
 	_move_dir = (base_dir + perp * zigzag).normalized()
 
-	global_position += _move_dir * speed * infected_speed_mult * delta
+	velocity = _move_dir * speed * infected_speed_mult
+	move_and_slide()
 
-	if visual:
-		if _move_dir.x < 0:
-			visual.flip_h = true
-		elif _move_dir.x > 0:
-			visual.flip_h = false
+	if visual and _move_dir.x != 0:
+		visual.flip_h = _move_dir.x < 0
 
 func _find_nearest_infected() -> Node2D:
 	var closest: Node2D = null

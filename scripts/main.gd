@@ -1,12 +1,12 @@
 extends Node2D
 
-@onready var player := $Arena/Player
+@onready var nav_region := $NavRegion2D
+@onready var player := $Entities/Player
 @onready var enemy_spawner := $EnemySpawner
 @onready var wave_manager := $WaveManager
 @onready var hud := $HUD
 @onready var shop := $Shop
 @onready var game_over := $GameOver
-@onready var death_watch_timer := $DeathWatchTimer
 
 func _ready() -> void:
 	if player and hud:
@@ -17,17 +17,41 @@ func _ready() -> void:
 	wave_manager.wave_ended.connect(_on_wave_ended)
 	wave_manager.wave_started.connect(_on_wave_started)
 	shop.closed.connect(_on_shop_closed)
+	await get_tree().process_frame
+	_generate_collision_from_navigation()
 	wave_manager.start_next_wave()
+
+func _generate_collision_from_navigation() -> void:
+	if not nav_region or not nav_region.navigation_polygon:
+		return
+
+	var static_body := StaticBody2D.new()
+	static_body.collision_layer = 4
+	static_body.collision_mask = 0
+	nav_region.add_child(static_body)
+
+	var outline_count: int = nav_region.navigation_polygon.get_outline_count()
+	for i in range(outline_count):
+		var outline_points: PackedVector2Array = nav_region.navigation_polygon.get_outline(i)
+		if outline_points.size() < 3:
+			continue
+			
+		var collision_polygon := CollisionPolygon2D.new()
+		collision_polygon.build_mode = CollisionPolygon2D.BUILD_SEGMENTS
+		collision_polygon.polygon = outline_points
+		static_body.add_child(collision_polygon)
+
+func _process(_delta: float) -> void:
+	if player and hud and wave_manager:
+		hud.update_health(player.health, player.max_health)
+		hud.update_peppers(player.peppers)
+		hud.update_timer(wave_manager.time_remaining)
+		hud.update_spicy(player.spicy_level, player.spicy_xp, player._xp_for_next_level())
+		_check_player_dead()
 
 func _check_player_dead() -> void:
 	if player.health <= 0:
 		game_over.show_game_over(wave_manager.current_wave)
-
-func _process(delta: float) -> void:
-	hud.update_health(player.health, player.max_health)
-	hud.update_peppers(player.peppers)
-	hud.update_timer(wave_manager.time_remaining)
-	hud.update_spicy(player.spicy_level, player.spicy_xp, player._xp_for_next_level())
 
 func _on_wave_started(wave_number: int) -> void:
 	hud.update_wave(wave_number)

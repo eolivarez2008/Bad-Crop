@@ -4,8 +4,12 @@
 [ext_resource type="Texture2D" uid="uid://ot32qosovvxm" path="res://assets/sprites/sprite.png" id="2_qfioo"]
 [ext_resource type="Texture2D" uid="uid://2oxa4n0hgqtj" path="res://assets/sprites/eye.png" id="3_bwp1s"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_qfioo"]
-radius = 19.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bwp1s"]
+radius = 7.0
+height = 46.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bwp1s"]
+radius = 19.026299
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0awvt"]
 bg_color = Color(0.8, 0.8, 0.8, 1)
@@ -44,9 +48,9 @@ scale_min = 2.0
 scale_max = 5.0
 color = Color(0.7, 0.04, 0.04, 1)
 
-[node name="EnemySlimek" type="Area2D" unique_id=958341226 groups=["enemies"]]
+[node name="EnemySlimek" type="CharacterBody2D" unique_id=1539085676 groups=["enemies"]]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 4
 script = ExtResource("1_slimek")
 
 [node name="Body" type="Sprite2D" parent="." unique_id=604162871]
@@ -56,8 +60,18 @@ region_enabled = true
 region_rect = Rect2(194.08832, 85.91928, 95.832184, 74.55591)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1617930675]
+position = Vector2(0, 13)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_bwp1s")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=1248605460]
 position = Vector2(2, 2)
-shape = SubResource("CircleShape2D_qfioo")
+collision_layer = 2
+collision_mask = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1320226868]
+shape = SubResource("CircleShape2D_bwp1s")
+debug_color = Color(0.9458224, 6.4495207e-06, 0.5929696, 0.41960785)
 
 [node name="HealthBar" type="ProgressBar" parent="." unique_id=1142004567]
 offset_left = -22.0
@@ -106,4 +120,4 @@ one_shot = true
 explosiveness = 0.95
 process_material = SubResource("ParticleProcessMaterial_bwp1s")
 
-[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=438272080]

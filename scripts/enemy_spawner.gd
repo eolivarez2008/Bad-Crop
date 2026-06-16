@@ -12,10 +12,6 @@ const SPAWN_WEIGHTS := {
 	"bruto":  0.15,
 }
 
-const ARENA_CENTER := Vector2(640, 360)
-const ARENA_RX := 840.0
-const ARENA_RY := 730.0
-
 const IndicatorScene := preload("res://scenes/indicator.tscn")
 
 var player: Node2D = null
@@ -26,7 +22,8 @@ var speed_mult := 1.0
 const INDICATOR_DURATION := 0.9
 
 @onready var timer := $SpawnTimer
-@onready var arena := $"../Arena"
+@onready var nav_region: NavigationRegion2D = $"../NavRegion2D"
+@onready var entities_container: Node2D = $"../Entities"
 
 func init(p: Node2D) -> void:
 	player = p
@@ -44,7 +41,7 @@ func stop() -> void:
 	timer.stop()
 
 func _on_spawn_timer_timeout() -> void:
-	if player == null or arena == null:
+	if player == null or nav_region == null or entities_container == null:
 		return
 	
 	var spawn_pos: Vector2 = _random_spawn_position()
@@ -53,17 +50,15 @@ func _on_spawn_timer_timeout() -> void:
 	_spawn_with_indicator(spawn_pos, enemy_key)
 
 func _random_spawn_position() -> Vector2:
-	var angle: float = randf() * TAU
-	var r: float = sqrt(randf())
-	return ARENA_CENTER + Vector2(cos(angle) * ARENA_RX * r, sin(angle) * ARENA_RY * r)
-
+	var region_rid: RID = nav_region.get_region_rid()
+	return NavigationServer2D.region_get_random_point(region_rid, 1, false)
 
 func _spawn_with_indicator(spawn_pos: Vector2, enemy_key: String) -> void:
 	var indicator := IndicatorScene.instantiate() as Sprite2D
 	indicator.global_position = spawn_pos
 	indicator.modulate = Color(1, 0, 0, 0.8)
 	indicator.add_to_group("indicators")
-	get_parent().add_child(indicator)
+	entities_container.add_child(indicator)
 	
 	var tween := create_tween().set_loops(3)
 	tween.tween_property(indicator, "modulate:a", 0.2, INDICATOR_DURATION / 6.0)
@@ -75,9 +70,9 @@ func _spawn_with_indicator(spawn_pos: Vector2, enemy_key: String) -> void:
 		indicator.queue_free()
 		if player == null:
 			return
-		var enemy: Area2D = ENEMY_SCENES[enemy_key].instantiate()
+		var enemy: CharacterBody2D = ENEMY_SCENES[enemy_key].instantiate()
 		enemy.global_position = spawn_pos
-		get_parent().add_child(enemy)
+		entities_container.add_child(enemy)
 		enemy.init(player, health_mult, speed_mult)
 	)
 

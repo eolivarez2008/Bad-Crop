@@ -216,9 +216,7 @@ func _activate_dash() -> void:
 	if dash_particles:
 		dash_particles.emitting = true
 		
-	var dash_dir = Vector2.ZERO
-	dash_dir.x = Input.get_axis("move_left", "move_right")
-	dash_dir.y = Input.get_axis("move_up", "move_down")
+	var dash_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	
 	if dash_dir == Vector2.ZERO:
 		dash_dir = _last_direction if _last_direction != Vector2.ZERO else Vector2.DOWN
@@ -233,7 +231,6 @@ func _activate_dash() -> void:
 		hud.flash_white()
 	
 	var tween = create_tween()
-	
 	tween.tween_callback(func():
 		_is_dashing = false
 		if dash_particles:
@@ -276,7 +273,7 @@ func _update_camera_effects(delta: float) -> void:
 	var target_camera_pos := Vector2.ZERO
 	if _is_moving:
 		target_camera_pos = _last_direction * look_ahead_distance
-	camera.position = camera.position.lerp(target_camera_pos, look_ahead_speed * delta)
+	camera.position = camera.position.Dynamic_Lerp(target_camera_pos, look_ahead_speed * delta) if "Dynamic_Lerp" in camera else camera.position.lerp(target_camera_pos, look_ahead_speed * delta)
 	if _shake_intensity > 0.0:
 		_shake_intensity = move_toward(_shake_intensity, 0.0, shake_decay * delta)
 		var shake_offset := Vector2(
@@ -310,7 +307,7 @@ func _update_procedural_animations(delta: float) -> void:
 		_anim_scale = _anim_scale.lerp(target_scale, 0.12)
 	scale = _anim_scale
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 		
@@ -323,18 +320,12 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 		
-	var direction := Vector2.ZERO
-	direction.x = Input.get_axis("move_left", "move_right")
-	direction.y = Input.get_axis("move_up", "move_down")
+	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if direction != Vector2.ZERO:
-		direction = direction.normalized()
 		_is_moving = true
 		_last_direction = direction
 		if body:
-			if direction.x < 0:
-				body.flip_h = true
-			elif direction.x > 0:
-				body.flip_h = false
+			body.flip_h = direction.x < 0
 	else:
 		_is_moving = false
 	velocity = direction * speed

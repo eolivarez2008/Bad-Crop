@@ -4,8 +4,12 @@
 [ext_resource type="Texture2D" uid="uid://ot32qosovvxm" path="res://assets/sprites/sprite.png" id="2_6j8be"]
 [ext_resource type="Texture2D" uid="uid://2oxa4n0hgqtj" path="res://assets/sprites/eye.png" id="3_lannb"]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lannb"]
+radius = 4.0
+height = 26.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_lannb"]
-radius = 16.03122
+radius = 14.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lannb"]
 bg_color = Color(0.8, 0.8, 0.8, 1)
@@ -44,9 +48,9 @@ scale_min = 2.0
 scale_max = 5.0
 color = Color(0.7, 0.04, 0.04, 1)
 
-[node name="EnemyZapper" type="Area2D" unique_id=353515400 groups=["enemies"]]
+[node name="EnemyZapper" type="CharacterBody2D" unique_id=2049012631 groups=["enemies"]]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 4
 script = ExtResource("1_zapper")
 
 [node name="Body" type="Sprite2D" parent="." unique_id=187117043]
@@ -56,7 +60,17 @@ region_enabled = true
 region_rect = Rect2(526.00494, 41.40509, 122.03839, 114.197876)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=833761039]
+position = Vector2(0, 10)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_lannb")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=992972100]
+collision_layer = 2
+collision_mask = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1865591383]
 shape = SubResource("CircleShape2D_lannb")
+debug_color = Color(0.94509804, 0, 0.5921569, 0.41960785)
 
 [node name="HealthBar" type="ProgressBar" parent="." unique_id=2141185538]
 offset_left = -19.0
@@ -106,4 +120,4 @@ one_shot = true
 explosiveness = 0.95
 process_material = SubResource("ParticleProcessMaterial_blood")
 
-[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=2038550028]

@@ -27,6 +27,7 @@ var target_player: CharacterBody2D = null
 
 func _ready() -> void:
 	add_to_group("peppers")
+	area_entered.connect(_on_area_entered_magnet)
 
 func init(t: Type) -> void:
 	type = t
@@ -44,16 +45,15 @@ func _process(delta: float) -> void:
 		scale = Vector2.ONE * lerp(0.5, 1.0, t)
 
 func _physics_process(delta: float) -> void:
-	if target_player:
+	if target_player and is_instance_valid(target_player):
 		var direction := global_position.direction_to(target_player.global_position)
 		global_position += direction * magnet_speed * delta
-	else:
-		for area in get_overlapping_areas():
-			if area.name == "MagnetArea":
-				var player_node = area.get_parent()
-				if player_node.is_in_group("player"):
-					target_player = player_node
-					break
+
+func _on_area_entered_magnet(area: Area2D) -> void:
+	if target_player == null and area.name == "MagnetArea":
+		var player_node = area.get_parent()
+		if player_node.is_in_group("player"):
+			target_player = player_node
 
 func _on_body_entered(body_node: Node) -> void:
 	if body_node.is_in_group("player"):

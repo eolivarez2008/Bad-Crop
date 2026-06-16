@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ot32qosovvxm" path="res://assets/sprites/sprite.png" id="2_qhqgy"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qhqgy"]
+radius = 6.0
 height = 42.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qhqgy"]
@@ -20,11 +21,11 @@ colors = PackedColorArray(1, 0.917, 0, 1, 1, 0.45, 0, 1, 0.86, 0.11, 0, 0.78, 0.
 
 [node name="Player" type="CharacterBody2D" unique_id=553080397]
 y_sort_enabled = true
+collision_mask = 20
 script = ExtResource("1_3vyb7")
 
 [node name="Body" type="Sprite2D" parent="." unique_id=1252013559]
 texture_filter = 1
-position = Vector2(-5, 19)
 scale = Vector2(0.5, 0.411)
 texture = ExtResource("2_qhqgy")
 offset = Vector2(-4.455, -53.505)
@@ -32,14 +33,14 @@ region_enabled = true
 region_rect = Rect2(20.72725, 26.272547, 125.81816, 135.3866)
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=1628304059]
-position = Vector2(-3, 17)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_qhqgy")
 
 [node name="MagnetArea" type="Area2D" parent="." unique_id=329395406]
+collision_layer = 16
+collision_mask = 16
 
 [node name="MagnetCollision" type="CollisionShape2D" parent="MagnetArea" unique_id=947698838]
-position = Vector2(-3, 17)
 shape = SubResource("CircleShape2D_qhqgy")
 debug_color = Color(0.9004931, 0.00016749502, 0.76413476, 0.41960785)
 
@@ -51,10 +52,10 @@ limit_bottom = 1290
 position_smoothing_enabled = true
 
 [node name="WeaponLeft" parent="." unique_id=952453100 instance=ExtResource("2_g2els")]
-position = Vector2(-24, 0)
+position = Vector2(-24, -15)
 
 [node name="WeaponRight" parent="." unique_id=2121068565 instance=ExtResource("2_g2els")]
-position = Vector2(24, 0)
+position = Vector2(24, -15)
 
 [node name="DashParticles" type="CPUParticles2D" parent="." unique_id=763201868]
 emitting = false

@@ -36,10 +36,11 @@ func _process(delta: float) -> void:
 		_shoot()
 
 func _shoot() -> void:
+	if target == null or not is_instance_valid(target):
+		return
 	var projectile := ProjectileScene.instantiate()
 	var dir: Vector2 = (target.global_position - global_position).normalized()
 	projectile.global_position = global_position
 	
 	get_tree().current_scene.add_child(projectile)
-	
 	projectile.init(dir, damage)

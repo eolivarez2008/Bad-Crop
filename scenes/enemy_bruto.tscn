@@ -5,8 +5,12 @@
 [ext_resource type="Texture2D" uid="uid://2oxa4n0hgqtj" path="res://assets/sprites/eye.png" id="3_cw88r"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_duoh8"]
-radius = 31.0
-height = 102.0
+radius = 9.0
+height = 72.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cw88r"]
+radius = 30.0
+height = 94.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cw88r"]
 bg_color = Color(0.8, 0.8, 0.8, 1)
@@ -45,9 +49,9 @@ scale_min = 2.0
 scale_max = 5.0
 color = Color(0.7, 0.04, 0.04, 1)
 
-[node name="EnemyBruto" type="Area2D" unique_id=511567837 groups=["enemies"]]
+[node name="EnemyBruto" type="CharacterBody2D" unique_id=1834889004 groups=["enemies"]]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 4
 script = ExtResource("1_bruto")
 
 [node name="Body" type="Sprite2D" parent="." unique_id=1552366769]
@@ -57,9 +61,19 @@ region_enabled = true
 region_rect = Rect2(328.93707, 36.966354, 179.81085, 127.66548)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=906935271]
-position = Vector2(0, 2)
+position = Vector2(0, 27)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_duoh8")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=892343061]
+collision_layer = 2
+collision_mask = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=2094378479]
+position = Vector2(0, 4)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_cw88r")
+debug_color = Color(0.94509804, 0, 0.5921569, 0.41960785)
 
 [node name="HealthBar" type="ProgressBar" parent="." unique_id=704457700]
 offset_left = -41.0
@@ -108,4 +122,4 @@ one_shot = true
 explosiveness = 0.95
 process_material = SubResource("ParticleProcessMaterial_cw88r")
 
-[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=1838637919]

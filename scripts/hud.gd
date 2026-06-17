@@ -61,14 +61,14 @@ func play_dash_effect(direction: Vector2) -> void:
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tween.tween_callback(func(): speed_lines.visible = false)
 
-func play_mind_control_effect() -> void:
+func play_screen_flash(flash_color: Color) -> void:
 	var vignette := TextureRect.new()
 	vignette.texture = _generate_vignette_texture()
 	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
 	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vignette.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	vignette.stretch_mode = TextureRect.STRETCH_SCALE
-	vignette.modulate = Color(1, 1, 1, 0)
+	vignette.modulate = Color(flash_color.r, flash_color.g, flash_color.b, 0.0)
 	add_child(vignette)
 
 	var tween := create_tween()

@@ -13,7 +13,7 @@ extends CharacterBody2D
 
 @onready var weapon_left := $WeaponLeft
 @onready var weapon_right := $WeaponRight
-@onready var body := $Body
+@onready var body: AnimatedSprite2D = $Body
 @onready var camera := $Camera
 @onready var dash_particles: CPUParticles2D = $DashParticles
 
@@ -27,12 +27,8 @@ var spicy_xp := 0
 var is_shielded := false
 var shield_duration := 3.0
 var shield_timer := 0.0
-var _flash_timer: float = 0.0
-var _squash_timer: float = 0.0
-var _anim_scale: Vector2 = Vector2.ONE
-var _time: float = 0.0
 var _is_moving: bool = false
-var _last_direction := Vector2.ZERO
+var _last_direction := Vector2.DOWN
 var _is_dashing: bool = false
 var hud: CanvasLayer = null
 var _movement_locked := false
@@ -44,10 +40,6 @@ var skills := [
 ]
 
 const SHOCKWAVE_EFFECT = preload("res://scenes/shockwave_effect.tscn")
-const COLOR_NORMAL := Color(1.0, 1.0, 1.0)
-const COLOR_HIT := Color(10.0, 10.0, 10.0)
-const FLASH_DURATION: float = 0.1
-const SQUASH_DURATION: float = 0.15
 const DASH_SPEED: float = 650.0
 
 func _ready() -> void:
@@ -102,23 +94,21 @@ func take_damage(amount: int) -> void:
 		return
 	health -= amount
 	health = max(0, health)
-	_flash_timer = FLASH_DURATION
-	_squash_timer = SQUASH_DURATION
-	_shake_intensity = 15.0
+	_shake_intensity = 5.0
 	if hud:
 		hud.update_health(health, max_health)
+		hud.play_screen_flash(Color(1.0, 0.1, 0.1))
 
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		queue_redraw()
 		return
 		
-	_time += delta
 	_update_nearest_enemy()
-	_update_procedural_animations(delta)
 	_update_camera_effects(delta)
 	_update_skills_cooldown(delta)
 	_update_shield(delta)
+	_update_sprite_animation()
 	
 func _update_shield(delta: float) -> void:
 	if not is_shielded:
@@ -189,7 +179,7 @@ func _activate_mind_control() -> void:
 		if is_instance_valid(enemy) and randf() <= 0.7:
 			enemy.infect()
 	if hud:
-		hud.play_mind_control_effect()
+		hud.play_screen_flash(Color(0.7, 0.1, 0.9))
 
 func _activate_bomb(radius: float, time: float, thickness: float) -> void:
 	var wave = SHOCKWAVE_EFFECT.instantiate()
@@ -282,30 +272,26 @@ func _update_camera_effects(delta: float) -> void:
 		)
 		camera.position += shake_offset
 
-func _update_procedural_animations(delta: float) -> void:
+func _update_sprite_animation() -> void:
 	if not body:
 		return
-	_flash_timer -= delta
-	_squash_timer -= delta
-	if _flash_timer > 0.0:
-		body.modulate = COLOR_HIT
+		
+	var anim_suffix := "front"
+	var angle := _last_direction.angle()
+	
+	if angle >= -PI/4 and angle < PI/4:
+		anim_suffix = "right"
+	elif angle >= PI/4 and angle < 3*PI/4:
+		anim_suffix = "front"
+	elif angle >= -3*PI/4 and angle < -PI/4:
+		anim_suffix = "back"
 	else:
-		body.modulate = COLOR_NORMAL
-	if _squash_timer > 0.0:
-		var t: float = _squash_timer / SQUASH_DURATION
-		var hit_scale: Vector2 = Vector2(1.0 + 0.4 * t, 1.0 - 0.4 * t)
-		_anim_scale = _anim_scale.lerp(hit_scale, 0.5)
-		scale = _anim_scale
-		return
+		anim_suffix = "left"
+		
 	if _is_moving:
-		var breathe: float = sin(_time * 16.0) * 0.04
-		var target_scale: Vector2 = Vector2(1.0 + breathe, 1.0 - breathe)
-		_anim_scale = _anim_scale.lerp(target_scale, 0.25)
+		body.play("run_" + anim_suffix)
 	else:
-		var idle: float = sin(_time * 7.0) * 0.04
-		var target_scale: Vector2 = Vector2(1.0 - idle, 1.0 + idle)
-		_anim_scale = _anim_scale.lerp(target_scale, 0.12)
-	scale = _anim_scale
+		body.play("idle_" + anim_suffix)
 
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint():
@@ -324,8 +310,6 @@ func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:
 		_is_moving = true
 		_last_direction = direction
-		if body:
-			body.flip_h = direction.x < 0
 	else:
 		_is_moving = false
 	velocity = direction * speed
